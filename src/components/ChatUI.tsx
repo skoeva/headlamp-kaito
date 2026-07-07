@@ -972,7 +972,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
                 </IconButton>
               </Tooltip>
               <Tooltip title="Clear conversation">
-                <IconButton onClick={clearChat} size="small">
+                <IconButton onClick={clearChat} size="small" aria-label="Clear conversation">
                   <Icon icon="material-symbols:delete" style={{ fontSize: 20 }} />
                 </IconButton>
               </Tooltip>
@@ -983,6 +983,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
                     onClose?.();
                   }}
                   size="small"
+                  aria-label="Close chat"
                   sx={{
                     color: '#ef4444',
                     fontSize: '18px',

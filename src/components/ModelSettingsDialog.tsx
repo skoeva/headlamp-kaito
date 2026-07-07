@@ -72,6 +72,7 @@ const ModelSettingsDialog: React.FC<Props> = ({ open, onClose, config, onSave })
               step="0.01"
               value={localConfig.temperature}
               onChange={handleTemperatureChange}
+              aria-label="Temperature"
               style={{ width: '100%' }}
             />
           </Box>
@@ -84,6 +85,7 @@ const ModelSettingsDialog: React.FC<Props> = ({ open, onClose, config, onSave })
               step="50"
               value={localConfig.maxTokens}
               onChange={handleMaxTokensChange}
+              aria-label="Max Tokens"
               style={{ width: '100%' }}
             />
           </Box>
@@ -96,6 +98,7 @@ const ModelSettingsDialog: React.FC<Props> = ({ open, onClose, config, onSave })
               step="0.01"
               value={localConfig.topP}
               onChange={handleTopPChange}
+              aria-label="Top P"
               style={{ width: '100%' }}
             />
           </Box>
@@ -108,6 +111,7 @@ const ModelSettingsDialog: React.FC<Props> = ({ open, onClose, config, onSave })
               step="1"
               value={localConfig.topK}
               onChange={handleTopKChange}
+              aria-label="Top K"
               style={{ width: '100%' }}
             />
           </Box>
