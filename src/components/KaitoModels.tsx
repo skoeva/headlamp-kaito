@@ -385,7 +385,7 @@ const KaitoModels = () => {
                   >
                     Deploy
                   </Button>
-                  <Link href={model.company.url} target="_blank">
+                  <Link href={model.company.url} target="_blank" rel="noopener noreferrer">
                     Learn More
                   </Link>
                 </CardActions>

@@ -33,7 +33,7 @@ const KaitoWorkspacesList: React.FC = () => {
               <StatusLabel status={getConditionStatus(condition)}>
                 {(status === 'warning' || status === 'error') && (
                   <Icon
-                    aria-label="hidden"
+                    aria-hidden
                     icon="mdi:alert-outline"
                     width="1.2rem"
                     height="1.2rem"

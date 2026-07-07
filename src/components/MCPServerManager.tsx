@@ -124,12 +124,15 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
                 <Checkbox
                   checked={server.enabled}
                   onChange={() => handleToggleServer(server.id)}
+                  inputProps={{ 'aria-label': `Enable ${server.name}` }}
                   sx={{ mr: 2 }}
                 />
                 <ListItemText
                   primary={
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <Typography variant="subtitle1">{server.name}</Typography>
+                      <Typography variant="subtitle1" component="span">
+                        {server.name}
+                      </Typography>
                       <Chip
                         label={server.transportType || 'streamableHttp'}
                         color="info"
@@ -152,10 +155,18 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
                   }
                 />
                 <ListItemSecondaryAction>
-                  <IconButton onClick={() => handleEditServer(server)} size="small">
+                  <IconButton
+                    onClick={() => handleEditServer(server)}
+                    size="small"
+                    aria-label={`Edit ${server.name}`}
+                  >
                     <Icon icon="material-symbols:edit" style={{ fontSize: 20 }} />
                   </IconButton>
-                  <IconButton onClick={() => handleDeleteServer(server.id)} size="small">
+                  <IconButton
+                    onClick={() => handleDeleteServer(server.id)}
+                    size="small"
+                    aria-label={`Delete ${server.name}`}
+                  >
                     <Icon icon="material-symbols:delete" style={{ fontSize: 20 }} />
                   </IconButton>
                 </ListItemSecondaryAction>
