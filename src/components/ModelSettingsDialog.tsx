@@ -1,3 +1,4 @@
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import {
   Box,
   Button,
@@ -24,6 +25,7 @@ interface Props {
 }
 
 const ModelSettingsDialog: React.FC<Props> = ({ open, onClose, config, onSave }) => {
+  const { t } = useTranslation();
   const defaultConfig = { temperature: 0.7, maxTokens: 1000, topP: 1.0, topK: 0 };
   const [localConfig, setLocalConfig] = React.useState(config || defaultConfig);
 
@@ -60,11 +62,13 @@ const ModelSettingsDialog: React.FC<Props> = ({ open, onClose, config, onSave })
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Model Settings</DialogTitle>
+      <DialogTitle>{t('Model Settings')}</DialogTitle>
       <DialogContent>
         <Box sx={{ width: 300, pt: 2 }}>
           <Box mb={3}>
-            <Typography gutterBottom>Temperature: {localConfig.temperature.toFixed(2)}</Typography>
+            <Typography gutterBottom>
+              {t('Temperature: {{value}}', { value: localConfig.temperature.toFixed(2) })}
+            </Typography>
             <input
               type="range"
               min="0"
@@ -76,7 +80,9 @@ const ModelSettingsDialog: React.FC<Props> = ({ open, onClose, config, onSave })
             />
           </Box>
           <Box mb={3}>
-            <Typography gutterBottom>Max Tokens: {localConfig.maxTokens}</Typography>
+            <Typography gutterBottom>
+              {t('Max Tokens: {{value}}', { value: localConfig.maxTokens })}
+            </Typography>
             <input
               type="range"
               min="100"
@@ -88,7 +94,9 @@ const ModelSettingsDialog: React.FC<Props> = ({ open, onClose, config, onSave })
             />
           </Box>
           <Box mb={3}>
-            <Typography gutterBottom>Top P: {localConfig.topP.toFixed(2)}</Typography>
+            <Typography gutterBottom>
+              {t('Top P: {{value}}', { value: localConfig.topP.toFixed(2) })}
+            </Typography>
             <input
               type="range"
               min="0"
@@ -100,7 +108,9 @@ const ModelSettingsDialog: React.FC<Props> = ({ open, onClose, config, onSave })
             />
           </Box>
           <Box mb={2}>
-            <Typography gutterBottom>Top K: {localConfig.topK}</Typography>
+            <Typography gutterBottom>
+              {t('Top K: {{value}}', { value: localConfig.topK })}
+            </Typography>
             <input
               type="range"
               min="0"
@@ -115,10 +125,10 @@ const ModelSettingsDialog: React.FC<Props> = ({ open, onClose, config, onSave })
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="inherit">
-          Cancel
+          {t('Cancel')}
         </Button>
         <Button onClick={handleSave} variant="contained">
-          Save
+          {t('Save')}
         </Button>
       </DialogActions>
     </Dialog>

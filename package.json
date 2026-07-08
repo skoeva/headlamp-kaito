@@ -12,6 +12,7 @@
     "lint-fix": "eslint --cache --fix --ext .js,.ts,.tsx src/",
     "package": "headlamp-plugin package",
     "tsc": "headlamp-plugin tsc",
+    "i18n": "headlamp-plugin i18n",
     "storybook": "headlamp-plugin storybook",
     "storybook-build": "headlamp-plugin storybook-build",
     "test": "headlamp-plugin test"
@@ -37,5 +38,28 @@
     "@mui/icons-material": "^5.16.7",
     "ai": "^4.3.16",
     "react-markdown": "^10.1.0"
+  },
+  "headlamp": {
+    "i18n": [
+      "en",
+      "de",
+      "es",
+      "fr",
+      "it",
+      "ja",
+      "id",
+      "ko",
+      "pt-BR",
+      "ru",
+      "zh-Hans",
+      "zh-Hant",
+      "cs",
+      "nl",
+      "hu",
+      "pt-PT",
+      "pl",
+      "sv",
+      "tr"
+    ]
   }
 }

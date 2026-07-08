@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import {
   Alert,
   Box,
@@ -39,6 +40,7 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
   servers,
   onServersChange,
 }) => {
+  const { t } = useTranslation();
   const [editingServer, setEditingServer] = useState<MCPServer | null>(null);
   const [newServer, setNewServer] = useState<Partial<MCPServer>>({
     name: '',
@@ -103,18 +105,20 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>MCP Server Management</DialogTitle>
+      <DialogTitle>{t('MCP Server Management')}</DialogTitle>
       <DialogContent>
         <Box sx={{ mb: 2 }}>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Manage Model Context Protocol (MCP) servers that provide tools and capabilities to your
-            AI models. Supports both <b>StreamableHTTP</b> and <b>SSE (Deprecated)</b> transport
-            types.
+            {t(
+              'Manage Model Context Protocol (MCP) servers that provide tools and capabilities to your AI models. Supports both StreamableHTTP and SSE (Deprecated) transport types.'
+            )}
           </Typography>
 
           {servers.length === 0 && (
             <Alert severity="info" sx={{ mb: 2 }}>
-              No MCP servers configured. Add a server to access external tools and data sources.
+              {t(
+                'No MCP servers configured. Add a server to access external tools and data sources.'
+              )}
             </Alert>
           )}
 
@@ -170,25 +174,25 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
               fullWidth
               sx={{ mt: 2 }}
             >
-              Add MCP Server
+              {t('Add MCP Server')}
             </Button>
           )}
 
           {showAddForm && (
             <Box sx={{ mt: 2, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
               <Typography variant="h6" sx={{ mb: 2 }}>
-                Add New MCP Server
+                {t('Add New MCP Server')}
               </Typography>
               <Stack spacing={2}>
                 <TextField
-                  label="Server Name"
+                  label={t('Server Name')}
                   value={newServer.name}
                   onChange={e => setNewServer(prev => ({ ...prev, name: e.target.value }))}
                   fullWidth
                   required
                 />
                 <TextField
-                  label="Endpoint URL"
+                  label={t('Endpoint URL')}
                   value={newServer.endpoint}
                   onChange={e => setNewServer(prev => ({ ...prev, endpoint: e.target.value }))}
                   fullWidth
@@ -200,12 +204,12 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
                   }
                   helperText={
                     newServer.transportType === 'sse'
-                      ? 'SSE endpoint URL (typically ends with /sse)'
-                      : 'StreamableHTTP endpoint URL (typically ends with /mcp)'
+                      ? t('SSE endpoint URL (typically ends with /sse)')
+                      : t('StreamableHTTP endpoint URL (typically ends with /mcp)')
                   }
                 />
                 <TextField
-                  label="Description (optional)"
+                  label={t('Description (optional)')}
                   value={newServer.description}
                   onChange={e => setNewServer(prev => ({ ...prev, description: e.target.value }))}
                   fullWidth
@@ -213,18 +217,18 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
                   rows={2}
                 />
                 <TextField
-                  label="API Key (optional)"
+                  label={t('API Key (optional)')}
                   value={newServer.apiKey}
                   onChange={e => setNewServer(prev => ({ ...prev, apiKey: e.target.value }))}
                   fullWidth
                   type="password"
-                  helperText="Leave empty if server doesn't require authentication"
+                  helperText={t("Leave empty if server doesn't require authentication")}
                 />
                 <FormControl fullWidth>
-                  <InputLabel>Transport Type</InputLabel>
+                  <InputLabel>{t('Transport Type')}</InputLabel>
                   <Select
                     value={newServer.transportType || 'streamableHttp'}
-                    label="Transport Type"
+                    label={t('Transport Type')}
                     onChange={e =>
                       setNewServer(prev => ({
                         ...prev,
@@ -233,19 +237,23 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
                     }
                   >
                     <MenuItem value="streamableHttp">StreamableHTTP</MenuItem>
-                    <MenuItem value="sse">Server-Sent Events (SSE) [Deprecated]</MenuItem>
+                    <MenuItem value="sse">{t('Server-Sent Events (SSE) [Deprecated]')}</MenuItem>
                   </Select>
                   <FormHelperText>
                     {newServer.transportType === 'sse'
-                      ? 'Uses Server-Sent Events for server-to-client communication and POST requests for client-to-server communication'
-                      : 'Uses HTTP POST requests with optional SSE streams for bidirectional communication'}
+                      ? t(
+                          'Uses Server-Sent Events for server-to-client communication and POST requests for client-to-server communication'
+                        )
+                      : t(
+                          'Uses HTTP POST requests with optional SSE streams for bidirectional communication'
+                        )}
                   </FormHelperText>
                 </FormControl>
                 <FormControl fullWidth>
-                  <InputLabel>Authentication Method</InputLabel>
+                  <InputLabel>{t('Authentication Method')}</InputLabel>
                   <Select
                     value={newServer.authMethod || 'header'}
-                    label="Authentication Method"
+                    label={t('Authentication Method')}
                     onChange={e =>
                       setNewServer(prev => ({
                         ...prev,
@@ -253,15 +261,15 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
                       }))
                     }
                   >
-                    <MenuItem value="header">Authorization Header</MenuItem>
-                    <MenuItem value="url">URL Path</MenuItem>
+                    <MenuItem value="header">{t('Authorization Header')}</MenuItem>
+                    <MenuItem value="url">{t('URL Path')}</MenuItem>
                   </Select>
                   <FormHelperText>
                     {newServer.authMethod === 'url'
-                      ? `API key will be included in URL path: /api-key/${
-                          newServer.transportType === 'sse' ? 'sse' : 'mcp'
-                        }`
-                      : 'API key will be sent in Authorization header as Bearer token'}
+                      ? t('API key will be included in URL path: /api-key/{{path}}', {
+                          path: newServer.transportType === 'sse' ? 'sse' : 'mcp',
+                        })
+                      : t('API key will be sent in Authorization header as Bearer token')}
                   </FormHelperText>
                 </FormControl>
                 <Stack direction="row" spacing={1}>
@@ -270,10 +278,10 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
                     variant="contained"
                     disabled={!newServer.name || !newServer.endpoint}
                   >
-                    Add Server
+                    {t('Add Server')}
                   </Button>
                   <Button onClick={() => setShowAddForm(false)} variant="outlined">
-                    Cancel
+                    {t('Cancel')}
                   </Button>
                 </Stack>
               </Stack>
@@ -283,11 +291,11 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
 
         {/* Edit Server Dialog */}
         <Dialog open={!!editingServer} onClose={() => setEditingServer(null)}>
-          <DialogTitle>Edit MCP Server</DialogTitle>
+          <DialogTitle>{t('Edit MCP Server')}</DialogTitle>
           <DialogContent>
             <Stack spacing={2} sx={{ mt: 1 }}>
               <TextField
-                label="Server Name"
+                label={t('Server Name')}
                 value={editingServer?.name || ''}
                 onChange={e =>
                   setEditingServer(prev => (prev ? { ...prev, name: e.target.value } : null))
@@ -296,7 +304,7 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
                 required
               />
               <TextField
-                label="Endpoint URL"
+                label={t('Endpoint URL')}
                 value={editingServer?.endpoint || ''}
                 onChange={e =>
                   setEditingServer(prev => (prev ? { ...prev, endpoint: e.target.value } : null))
@@ -305,7 +313,7 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
                 required
               />
               <TextField
-                label="Description (optional)"
+                label={t('Description (optional)')}
                 value={editingServer?.description || ''}
                 onChange={e =>
                   setEditingServer(prev => (prev ? { ...prev, description: e.target.value } : null))
@@ -315,20 +323,20 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
                 rows={2}
               />
               <TextField
-                label="API Key (optional)"
+                label={t('API Key (optional)')}
                 value={editingServer?.apiKey || ''}
                 onChange={e =>
                   setEditingServer(prev => (prev ? { ...prev, apiKey: e.target.value } : null))
                 }
                 fullWidth
                 type="password"
-                helperText="Leave empty if server doesn't require authentication"
+                helperText={t("Leave empty if server doesn't require authentication")}
               />
               <FormControl fullWidth>
-                <InputLabel>Transport Type</InputLabel>
+                <InputLabel>{t('Transport Type')}</InputLabel>
                 <Select
                   value={editingServer?.transportType || 'streamableHttp'}
-                  label="Transport Type"
+                  label={t('Transport Type')}
                   onChange={e =>
                     setEditingServer(prev =>
                       prev
@@ -338,48 +346,52 @@ const MCPServerManager: React.FC<MCPServerManagerProps> = ({
                   }
                 >
                   <MenuItem value="streamableHttp">StreamableHTTP</MenuItem>
-                  <MenuItem value="sse">Server-Sent Events (SSE)</MenuItem>
+                  <MenuItem value="sse">{t('Server-Sent Events (SSE)')}</MenuItem>
                 </Select>
                 <FormHelperText>
                   {editingServer?.transportType === 'sse'
-                    ? 'Uses Server-Sent Events for server-to-client communication and POST requests for client-to-server communication'
-                    : 'Uses HTTP POST requests with optional SSE streams for bidirectional communication'}
+                    ? t(
+                        'Uses Server-Sent Events for server-to-client communication and POST requests for client-to-server communication'
+                      )
+                    : t(
+                        'Uses HTTP POST requests with optional SSE streams for bidirectional communication'
+                      )}
                 </FormHelperText>
               </FormControl>
               <FormControl fullWidth>
-                <InputLabel>Authentication Method</InputLabel>
+                <InputLabel>{t('Authentication Method')}</InputLabel>
                 <Select
                   value={editingServer?.authMethod || 'header'}
-                  label="Authentication Method"
+                  label={t('Authentication Method')}
                   onChange={e =>
                     setEditingServer(prev =>
                       prev ? { ...prev, authMethod: e.target.value as 'url' | 'header' } : null
                     )
                   }
                 >
-                  <MenuItem value="header">Authorization Header</MenuItem>
-                  <MenuItem value="url">URL Path</MenuItem>
+                  <MenuItem value="header">{t('Authorization Header')}</MenuItem>
+                  <MenuItem value="url">{t('URL Path')}</MenuItem>
                 </Select>
                 <FormHelperText>
                   {editingServer?.authMethod === 'url'
-                    ? `API key will be included in URL path: /api-key/${
-                        editingServer?.transportType === 'sse' ? 'sse' : 'mcp'
-                      }`
-                    : 'API key will be sent in Authorization header as Bearer token'}
+                    ? t('API key will be included in URL path: /api-key/{{path}}', {
+                        path: editingServer?.transportType === 'sse' ? 'sse' : 'mcp',
+                      })
+                    : t('API key will be sent in Authorization header as Bearer token')}
                 </FormHelperText>
               </FormControl>
             </Stack>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setEditingServer(null)}>Cancel</Button>
+            <Button onClick={() => setEditingServer(null)}>{t('Cancel')}</Button>
             <Button onClick={handleSaveEdit} variant="contained">
-              Save
+              {t('Save')}
             </Button>
           </DialogActions>
         </Dialog>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Close</Button>
+        <Button onClick={onClose}>{t('Close')}</Button>
       </DialogActions>
     </Dialog>
   );

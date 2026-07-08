@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import {
   Autocomplete,
   Box,
@@ -66,6 +67,7 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
   helperText = 'Select specific nodes for model deployment. Leave empty to use Kaito GPU provisioner.',
   onRequiredNodesChange,
 }) => {
+  const { t } = useTranslation();
   const [nodes, setNodes] = useState<NodeInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,11 +89,14 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
       const fetchedNodes = await fetchAvailableNodes(finalSelector);
       setNodes(fetchedNodes);
       if (fetchedNodes.length === 0 && finalSelector) {
-        const nodeType = autoFilterGPU ? 'GPU nodes' : 'nodes';
-        setError(`No ${nodeType} match the specified criteria`);
+        setError(
+          autoFilterGPU
+            ? t('No GPU nodes match the specified criteria')
+            : t('No nodes match the specified criteria')
+        );
       }
     } catch (err) {
-      setError('Failed to fetch nodes');
+      setError(t('Failed to fetch nodes'));
       console.error('Error fetching nodes:', err);
     } finally {
       setLoading(false);
@@ -127,11 +132,11 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
   };
 
   const getNodeStatus = (node: NodeInfo) => {
-    if (!node.ready) return { color: 'error', icon: 'mdi:alert-circle', text: 'Not Ready' };
+    if (!node.ready) return { color: 'error', icon: 'mdi:alert-circle', text: t('Not Ready') };
     if (node.taints.some(t => t.effect === 'NoSchedule')) {
-      return { color: 'warning', icon: 'mdi:alert', text: 'Tainted' };
+      return { color: 'warning', icon: 'mdi:alert', text: t('Tainted') };
     }
-    return { color: 'success', icon: 'mdi:check-circle', text: 'Ready' };
+    return { color: 'success', icon: 'mdi:check-circle', text: t('Ready') };
   };
 
   const filteredNodes = nodes.filter(node => node.ready);
@@ -163,13 +168,13 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
               startIcon={<Icon icon={showAdvanced ? 'mdi:chevron-up' : 'mdi:chevron-down'} />}
               sx={{ alignSelf: 'flex-start', textTransform: 'none' }}
             >
-              Quick Selectors
+              {t('Quick Selectors')}
             </Button>
 
             <Collapse in={showAdvanced}>
               <Box>
                 <Typography variant="caption" color="text.secondary" gutterBottom>
-                  Common label selectors:
+                  {t('Common label selectors:')}
                 </Typography>
                 <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
                   {COMMON_LABEL_SELECTORS.filter(preset =>
@@ -178,7 +183,7 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
                   ).map(preset => (
                     <Chip
                       key={preset.value}
-                      label={preset.label}
+                      label={t(preset.label)}
                       size="small"
                       variant="outlined"
                       onClick={() => handleQuickSelect(preset.value)}
@@ -194,8 +199,8 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
               fullWidth
               label={
                 autoFilterGPU
-                  ? 'Additional GPU Node Filters (optional)'
-                  : 'Node Label Selector (optional)'
+                  ? t('Additional GPU Node Filters (optional)')
+                  : t('Node Label Selector (optional)')
               }
               value={labelSelector}
               onChange={e => handleLabelSelectorChange(e.target.value)}
@@ -207,14 +212,14 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
               }
               helperText={
                 autoFilterGPU
-                  ? 'Add additional filters for GPU nodes.'
-                  : 'Filter nodes by labels. Use comma-separated key=value pairs.'
+                  ? t('Add additional filters for GPU nodes.')
+                  : t('Filter nodes by labels. Use comma-separated key=value pairs.')
               }
               size="small"
             />
             <TextField
               fullWidth
-              label="Specify Number of Nodes (optional)"
+              label={t('Specify Number of Nodes (optional)')}
               type="number"
               value={requiredNodes}
               onChange={e =>
@@ -222,7 +227,9 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
               }
               disabled={disabled}
               placeholder="e.g., 2"
-              helperText="Specify the exact number of nodes. If not selected, Kaito will auto-provision this many nodes."
+              helperText={t(
+                'Specify the exact number of nodes. If not selected, Kaito will auto-provision this many nodes.'
+              )}
               size="small"
               inputProps={{ min: 1 }}
             />
@@ -243,7 +250,7 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
             }
             label={
               <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography variant="body2">Show GPU nodes only</Typography>
+                <Typography variant="body2">{t('Show GPU nodes only')}</Typography>
               </Stack>
             }
             sx={{ margin: 0 }}
@@ -265,12 +272,20 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
           renderInput={params => (
             <TextField
               {...params}
-              label={autoFilterGPU ? 'Preferred GPU Nodes' : 'Preferred Nodes'}
+              label={autoFilterGPU ? t('Preferred GPU Nodes') : t('Preferred Nodes')}
               placeholder={
                 selectedNodes.length === 0
-                  ? `Select ${autoFilterGPU ? 'GPU ' : ''}nodes${
-                      requiredNodes ? ` (need exactly ${requiredNodes})` : ''
-                    } (optional)`
+                  ? requiredNodes
+                    ? autoFilterGPU
+                      ? t('Select GPU nodes (need exactly {{num}}) (optional)', {
+                          num: requiredNodes,
+                        })
+                      : t('Select nodes (need exactly {{num}}) (optional)', {
+                          num: requiredNodes,
+                        })
+                    : autoFilterGPU
+                    ? t('Select GPU nodes (optional)')
+                    : t('Select nodes (optional)')
                   : ''
               }
               size="small"
@@ -291,7 +306,11 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
                 </Stack>
                 {option.node.taints.length > 0 && (
                   <Typography variant="caption" color="text.secondary">
-                    Taints: {option.node.taints.map(t => `${t.key}:${t.effect}`).join(', ')}
+                    {t('Taints: {{taints}}', {
+                      taints: option.node.taints
+                        .map(taint => `${taint.key}:${taint.effect}`)
+                        .join(', '),
+                    })}
                   </Typography>
                 )}
               </Box>
@@ -323,7 +342,10 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
                 <span>{helperText}</span>
                 {requiredNodes && typeof requiredNodes === 'number' && (
                   <Typography variant="caption" color="text.secondary" display="block">
-                    Selected: {selectedNodes.length}/{requiredNodes}
+                    {t('Selected: {{selected}}/{{required}}', {
+                      selected: selectedNodes.length,
+                      required: requiredNodes,
+                    })}
                     {selectedNodes.length !== requiredNodes && (
                       <span
                         style={{
@@ -332,12 +354,16 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
                         }}
                       >
                         {selectedNodes.length === 0
-                          ? '(Will auto-provision)'
-                          : `(Need ${requiredNodes - selectedNodes.length} more)`}
+                          ? t('(Will auto-provision)')
+                          : t('(Need {{num}} more)', {
+                              num: requiredNodes - selectedNodes.length,
+                            })}
                       </span>
                     )}
                     {selectedNodes.length === requiredNodes && (
-                      <span style={{ color: 'green', marginLeft: 4 }}>Exact requirement met</span>
+                      <span style={{ color: 'green', marginLeft: 4 }}>
+                        {t('Exact requirement met')}
+                      </span>
                     )}
                   </Typography>
                 )}
@@ -348,7 +374,7 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
                   onClick={clearSelection}
                   sx={{ textTransform: 'none', minWidth: 'auto' }}
                 >
-                  Clear
+                  {t('Clear')}
                 </Button>
               )}
             </Stack>
@@ -359,14 +385,14 @@ const NodeSelector: React.FC<NodeSelectorProps> = ({
       {selectedNodes.length > 0 && (
         <Box mt={2}>
           <Typography variant="body2" color="text.secondary" gutterBottom>
-            Selected Nodes ({selectedNodes.length}):
+            {t('Selected Nodes ({{num}}):', { num: selectedNodes.length })}
           </Typography>
           <Box display="flex" flexWrap="wrap" gap={1}>
             {selectedNodes.map(nodeName => {
               const node = nodes.find(n => n.name === nodeName);
               const status = node
                 ? getNodeStatus(node)
-                : { color: 'default', icon: 'mdi:help', text: 'Unknown' };
+                : { color: 'default', icon: 'mdi:help', text: t('Unknown') };
 
               return (
                 <Chip

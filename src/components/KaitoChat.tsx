@@ -1,3 +1,4 @@
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { request } from '@kinvolk/headlamp-plugin/lib/ApiProxy';
 import { Autocomplete, Box, Button, Stack, TextField, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -17,6 +18,7 @@ interface ModelOption {
 
 const KaitoChat: React.FC = () => {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const [models, setModels] = useState<ModelOption[]>([]);
   const [selectedModel, setSelectedModel] = useState<ModelOption | null>(null);
@@ -135,11 +137,11 @@ const KaitoChat: React.FC = () => {
             mt: 3.5,
           }}
         >
-          Chat with
+          {t('Chat with')}
         </Typography>
         <Box>
           <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-            Workspace
+            {t('Workspace')}
           </Typography>
           <Box sx={{ width: 250 }}>
             <Autocomplete
@@ -148,18 +150,20 @@ const KaitoChat: React.FC = () => {
               value={selectedWorkspace}
               onChange={(_, val) => setSelectedWorkspace(val)}
               fullWidth
-              noOptionsText="No ready workspaces available"
-              renderInput={params => <TextField {...params} placeholder="Select a workspace" />}
+              noOptionsText={t('No ready workspaces available')}
+              renderInput={params => (
+                <TextField {...params} placeholder={t('Select a workspace')} />
+              )}
             />
             <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-              Only showing ready workspaces
+              {t('Only showing ready workspaces')}
             </Typography>
           </Box>
         </Box>
         {selectedWorkspace && (
           <Box>
             <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-              Model
+              {t('Model')}
             </Typography>
             <Box sx={{ width: 250 }}>
               <Autocomplete
@@ -168,7 +172,7 @@ const KaitoChat: React.FC = () => {
                 value={selectedModel}
                 onChange={(_, val) => setSelectedModel(val)}
                 fullWidth
-                renderInput={params => <TextField {...params} placeholder="Select a model" />}
+                renderInput={params => <TextField {...params} placeholder={t('Select a model')} />}
               />
             </Box>
           </Box>
@@ -189,7 +193,7 @@ const KaitoChat: React.FC = () => {
                 onClick={() => setDialogOpen(true)}
                 sx={{ height: '56px', width: '100%' }}
               >
-                Go
+                {t('Go')}
               </Button>
             </Box>
           </Box>

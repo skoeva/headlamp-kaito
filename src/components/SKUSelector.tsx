@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import {
   Autocomplete,
   Box,
@@ -30,6 +31,7 @@ const SKUSelector: React.FC<SKUSelectorProps> = ({
   disabled = false,
   isAutoProvisioningMode = true,
 }) => {
+  const { t } = useTranslation();
   const [cloudProvider, setCloudProvider] = useState<CloudProvider>('azure');
   const [skuData, setSKUData] = useState<Record<CloudProvider, GPUConfig[]>>({
     azure: [],
@@ -43,9 +45,9 @@ const SKUSelector: React.FC<SKUSelectorProps> = ({
     azure: null,
     aws: null
   });
-  
+
   const currentSKUs = skuData[cloudProvider];
-  
+
   // Fetch SKU data when component mounts or provider changes
   useEffect(() => {
     const loadSKUData = async (provider: CloudProvider) => {
@@ -70,10 +72,10 @@ const SKUSelector: React.FC<SKUSelectorProps> = ({
 
     loadSKUData(cloudProvider);
   }, [cloudProvider, skuData]);
-  
+
   const handleSKUChange = (sku: string) => {
     onSKUChange(sku);
-    
+
     if (onGPUCountChange) {
       const selectedOption = currentSKUs.find(option => option.value === sku);
       onGPUCountChange(selectedOption?.gpuCount || 0);
@@ -108,7 +110,7 @@ const SKUSelector: React.FC<SKUSelectorProps> = ({
           <Typography variant="subtitle2" gutterBottom>
             <Stack direction="row" alignItems="center" spacing={1}>
               <Icon icon="mdi:cloud" width={18} height={18} />
-              <span>Cloud Provider</span>
+              <span>{t('Cloud Provider')}</span>
             </Stack>
           </Typography>
           <ToggleButtonGroup
@@ -142,11 +144,16 @@ const SKUSelector: React.FC<SKUSelectorProps> = ({
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Icon icon="mdi:alert-circle" width={16} height={16} color="error" />
                 <Typography variant="body2" color="error.main">
-                  Failed to load {cloudProvider.toUpperCase()} SKUs: {currentError}
+                  {t('Failed to load {{provider}} SKUs: {{error}}', {
+                    provider: cloudProvider.toUpperCase(),
+                    error: currentError,
+                  })}
                 </Typography>
               </Stack>
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                Using fallback configurations. Check your internet connection and try refreshing.
+                {t(
+                  'Using fallback configurations. Check your internet connection and try refreshing.'
+                )}
               </Typography>
             </Box>
           ) : (
@@ -161,11 +168,15 @@ const SKUSelector: React.FC<SKUSelectorProps> = ({
               renderInput={params => (
                 <TextField
                   {...params}
-                  label={`Preferred GPU SKU (${cloudProvider.toUpperCase()} Auto-Provisioning)`}
+                  label={t('Preferred GPU SKU ({{provider}} Auto-Provisioning)', {
+                    provider: cloudProvider.toUpperCase(),
+                  })}
                   placeholder={
-                    isCurrentLoading 
-                      ? `Loading ${cloudProvider.toUpperCase()} SKUs...` 
-                      : `Select a ${cloudProvider.toUpperCase()} GPU SKU for automatic provisioning`
+                    isCurrentLoading
+                      ? t('Loading {{provider}} SKUs...', { provider: cloudProvider.toUpperCase() })
+                      : t('Select a {{provider}} GPU SKU for automatic provisioning', {
+                          provider: cloudProvider.toUpperCase(),
+                        })
                   }
                   size="small"
                   InputProps={{
@@ -219,9 +230,9 @@ const SKUSelector: React.FC<SKUSelectorProps> = ({
               clearIcon={selectedSKU ? undefined : null}
               isClearable={!!selectedSKU}
               noOptionsText={
-                isCurrentLoading 
-                  ? `Loading ${cloudProvider.toUpperCase()} SKUs...` 
-                  : `No ${cloudProvider.toUpperCase()} SKUs available`
+                isCurrentLoading
+                  ? t('Loading {{provider}} SKUs...', { provider: cloudProvider.toUpperCase() })
+                  : t('No {{provider}} SKUs available', { provider: cloudProvider.toUpperCase() })
               }
             />
           )}
@@ -229,10 +240,16 @@ const SKUSelector: React.FC<SKUSelectorProps> = ({
             <Stack direction="row" alignItems="center" spacing={0.5}>
               <Icon icon="mdi:information-outline" width={14} height={14} />
               <span>
-                When no specific nodes are selected, Kaito will automatically provision nodes with the selected SKU.
+                {t(
+                  'When no specific nodes are selected, Kaito will automatically provision nodes with the selected SKU.'
+                )}
                 {selectedSKU && !isCurrentLoading && (
                   <>
-                    {' '} Currently targeting: <strong>{currentSKUs.find(sku => sku.value === selectedSKU)?.label}</strong> on {cloudProvider.toUpperCase()}
+                    {' '}
+                    {t('Currently targeting: {{label}} on {{provider}}', {
+                      label: currentSKUs.find(sku => sku.value === selectedSKU)?.label,
+                      provider: cloudProvider.toUpperCase(),
+                    })}
                   </>
                 )}
               </span>
@@ -244,7 +261,10 @@ const SKUSelector: React.FC<SKUSelectorProps> = ({
           <Box>
             <Typography variant="caption" color="primary.main" display="block">
               <Icon icon="mdi:rocket-launch" width={12} height={12} style={{ marginRight: 4 }} />
-              Auto-provisioning with {currentSKUs.find(sku => sku.value === selectedSKU)?.label} on {cloudProvider.toUpperCase()}
+              {t('Auto-provisioning with {{label}} on {{provider}}', {
+                label: currentSKUs.find(sku => sku.value === selectedSKU)?.label,
+                provider: cloudProvider.toUpperCase(),
+              })}
             </Typography>
           </Box>
         )}
@@ -254,7 +274,9 @@ const SKUSelector: React.FC<SKUSelectorProps> = ({
             <Stack direction="row" alignItems="center" spacing={1}>
               <CircularProgress size={16} />
               <Typography variant="caption" color="text.secondary">
-                Loading {cloudProvider.toUpperCase()} GPU SKUs from GitHub...
+                {t('Loading {{provider}} GPU SKUs from GitHub...', {
+                  provider: cloudProvider.toUpperCase(),
+                })}
               </Typography>
             </Stack>
           </Box>

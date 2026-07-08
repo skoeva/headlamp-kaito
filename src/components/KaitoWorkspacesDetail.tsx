@@ -1,3 +1,4 @@
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import {
   ActionButton,
   ConditionsSection,
@@ -14,6 +15,7 @@ import { Workspace } from './resources/workspace';
 const StringArray = ({ items }: { items?: string[] }) => (items?.length ? items.join(', ') : '');
 
 export function WorkspaceDetail() {
+  const { t } = useTranslation();
   const { name, namespace } = useParams<{ name: string; namespace: string }>();
   const [chatOpen, setChatOpen] = useState(false);
   const [_selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
@@ -41,7 +43,7 @@ export function WorkspaceDetail() {
               id: 'chat',
               action: (
                 <ActionButton
-                  description="Chat"
+                  description={t('Chat')}
                   aria-label="chat"
                   icon="mdi:chat"
                   onClick={() => handleChat(item)}
@@ -56,23 +58,23 @@ export function WorkspaceDetail() {
             {
               id: 'ResourceSpec',
               section: item.resource && (
-                <SectionBox title="Resources">
+                <SectionBox title={t('Resources')}>
                   <NameValueTable
                     rows={[
                       {
-                        name: 'Count',
+                        name: t('Count'),
                         value: item.resource.count?.toString(),
                       },
                       {
-                        name: 'Instance Type',
+                        name: t('Instance Type'),
                         value: item.resource.instanceType,
                       },
                       {
-                        name: 'Preferred Nodes',
+                        name: t('Preferred Nodes'),
                         value: <StringArray items={item.resource.preferredNodes} />,
                       },
                       {
-                        name: 'Node Selector',
+                        name: t('Node Selector'),
                         value: item.resource.labelSelector?.matchLabels && (
                           <MetadataDictGrid
                             dict={
@@ -90,23 +92,23 @@ export function WorkspaceDetail() {
             {
               id: 'InferenceSpec',
               section: item.inference && (
-                <SectionBox title="Inference">
+                <SectionBox title={t('Inference')}>
                   <NameValueTable
                     rows={[
                       {
-                        name: 'Preset Name',
+                        name: t('Preset Name'),
                         value: item.inference.preset?.name,
                       },
                       {
-                        name: 'Preset Image',
+                        name: t('Preset Image'),
                         value: item.inference.preset?.presetOptions?.image,
                       },
                       {
-                        name: 'Config',
+                        name: t('Config'),
                         value: item.inference.config,
                       },
                       {
-                        name: 'Adapters',
+                        name: t('Adapters'),
                         value: item.inference.adapters
                           ? item.inference.adapters
                               .map(a => `${a.source?.name} (${a.strength})`)
@@ -122,32 +124,32 @@ export function WorkspaceDetail() {
             {
               id: 'TuningSpec',
               section: item.tuning && (
-                <SectionBox title="Tuning">
+                <SectionBox title={t('Tuning')}>
                   <NameValueTable
                     rows={[
                       {
-                        name: 'Preset Name',
+                        name: t('Preset Name'),
                         value: item.tuning.preset?.name,
                       },
                       {
-                        name: 'Preset Image',
+                        name: t('Preset Image'),
                         value: item.tuning.preset?.presetOptions?.image,
                       },
                       {
-                        name: 'Tuning Method',
+                        name: t('Tuning Method'),
                         value: item.tuning.method,
                       },
                       {
-                        name: 'Config',
+                        name: t('Config'),
                         value: item.tuning.config,
                       },
                       {
-                        name: 'Input Data Source',
+                        name: t('Input Data Source'),
                         value: item.tuning.input?.name,
                       },
                       {
-                        name: 'Output Data Destination',
-                        value: item.tuning.output?.volumeSource ? 'Volume' : '',
+                        name: t('Output Data Destination'),
+                        value: item.tuning.output?.volumeSource ? t('Volume') : '',
                       },
                     ]}
                   />
@@ -158,11 +160,11 @@ export function WorkspaceDetail() {
             {
               id: 'Status',
               section: item.status?.conditions && (
-                <SectionBox title="Status">
+                <SectionBox title={t('Status')}>
                   <NameValueTable
                     rows={[
                       {
-                        name: 'Worker Nodes',
+                        name: t('Worker Nodes'),
                         value: item.status.workerNodes?.join(', ') || '',
                       },
                       ...item.status.conditions.map(c => ({

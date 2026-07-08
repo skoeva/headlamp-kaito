@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { EditorDialog } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import {
   Accordion,
@@ -59,6 +60,7 @@ const WorkspaceDeploymentDialog: React.FC<WorkspaceDeploymentDialogProps> = ({
   model,
   onDeploy: _onDeploy,
 }) => {
+  const { t } = useTranslation();
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedNodeData, setSelectedNodeData] = useState<NodeInfo[]>([]);
   const [labelSelector, setLabelSelector] = useState<string>('');
@@ -210,7 +212,9 @@ inference:
           <Stack direction="row" alignItems="center" spacing={2}>
             <Icon icon="mdi:rocket-launch" width={24} height={24} />
             <Box>
-              <Typography variant="h6">Deploy Model: {model.name}</Typography>
+              <Typography variant="h6">
+                {t('Deploy Model: {{name}}', { name: model.name })}
+              </Typography>
               <Typography variant="body2" color="text.secondary">
                 {model.company.name} • {model.version} • {model.instanceType}
               </Typography>
@@ -223,8 +227,10 @@ inference:
             {selectedNodes.length > 0 && (
               <Alert severity="success">
                 <Typography variant="body2">
-                  <strong>{selectedNodes.length} node(s) selected</strong> for deployment. The model
-                  will be scheduled on these specific nodes.
+                  <strong>
+                    {t('{{num}} node(s) selected', { num: selectedNodes.length })}
+                  </strong>{' '}
+                  {t('for deployment. The model will be scheduled on these specific nodes.')}
                 </Typography>
               </Alert>
             )}
@@ -232,20 +238,22 @@ inference:
             {selectedNodes.length === 0 && (
               <Alert severity="info">
                 <Typography variant="body2">
-                  <strong>Automatic GPU Provisioning:</strong> No specific nodes selected. Kaito
-                  will automatically provision the required GPU resources for this model.
+                  <strong>{t('Automatic GPU Provisioning:')}</strong>{' '}
+                  {t(
+                    'No specific nodes selected. Kaito will automatically provision the required GPU resources for this model.'
+                  )}
                 </Typography>
               </Alert>
             )}
 
-            <Accordion 
-              expanded={nodeSelectionExpanded} 
+            <Accordion
+              expanded={nodeSelectionExpanded}
               onChange={(_, isExpanded) => setNodeSelectionExpanded(isExpanded)}
               variant="outlined"
             >
               <AccordionSummary
                 expandIcon={<Icon icon="mdi:chevron-down" />}
-                sx={{ 
+                sx={{
                   backgroundColor: theme => theme.palette.background.default,
                   '&:hover': {
                     backgroundColor: theme => theme.palette.action.hover,
@@ -254,9 +262,7 @@ inference:
               >
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <Icon icon="mdi:server" width={20} height={20} />
-                  <Typography variant="subtitle1">
-                    Node Selection (Optional)
-                  </Typography>
+                  <Typography variant="subtitle1">{t('Node Selection (Optional)')}</Typography>
                 </Stack>
               </AccordionSummary>
               <AccordionDetails>
@@ -266,7 +272,9 @@ inference:
                   labelSelector={labelSelector}
                   onLabelSelectorChange={setLabelSelector}
                   onRequiredNodesChange={handleRequiredNodesChange}
-                  helperText="Select specific nodes for model deployment. If no nodes are selected, Kaito will automatically provision GPU resources."
+                  helperText={t(
+                    'Select specific nodes for model deployment. If no nodes are selected, Kaito will automatically provision GPU resources.'
+                  )}
                 />
               </AccordionDetails>
             </Accordion>
@@ -276,7 +284,7 @@ inference:
                 <Accordion variant="outlined">
                   <AccordionSummary
                     expandIcon={<Icon icon="mdi:chevron-down" />}
-                    sx={{ 
+                    sx={{
                       backgroundColor: theme => theme.palette.background.default,
                       '&:hover': {
                         backgroundColor: theme => theme.palette.action.hover,
@@ -286,7 +294,7 @@ inference:
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <Icon icon="mdi:chip" width={20} height={20} />
                       <Typography variant="subtitle1">
-                        GPU SKU Selection (Auto-Provisioning, Optional)
+                        {t('GPU SKU Selection (Auto-Provisioning, Optional)')}
                       </Typography>
                     </Stack>
                   </AccordionSummary>
@@ -305,7 +313,7 @@ inference:
 
             <Box>
               <Typography variant="subtitle2" gutterBottom>
-                Deployment Preview:
+                {t('Deployment Preview:')}
               </Typography>
               <Paper
                 variant="outlined"
@@ -326,17 +334,17 @@ inference:
 
         <DialogActions>
           <Button onClick={handleReset} color="inherit">
-            Reset
+            {t('Reset')}
           </Button>
           <Button onClick={onClose} color="inherit">
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             onClick={handleDeploy}
             variant="contained"
             startIcon={<Icon icon="mdi:rocket-launch" />}
           >
-            Review & Deploy
+            {t('Review & Deploy')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -353,8 +361,8 @@ inference:
             setEditorValue(newVal);
           }}
           onSave="default"
-          title={`Deploy Model: ${model.name}`}
-          saveLabel="Apply"
+          title={t('Deploy Model: {{name}}', { name: model.name })}
+          saveLabel={t('Apply')}
         />
       )}
     </>

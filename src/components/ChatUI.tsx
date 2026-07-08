@@ -1,5 +1,6 @@
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { Icon } from '@iconify/react';
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import {
   Autocomplete,
   Avatar,
@@ -175,6 +176,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
   theme: themeProp,
 }) => {
   const theme = themeProp || useTheme();
+  const { t } = useTranslation();
   const [config, setConfig] = useState<ModelConfig>(DEFAULT_OPENAI_CONFIG);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { temperature = 0.7, maxTokens = 1000, topP = 1.0, topK = 0 } = config || {};
@@ -182,7 +184,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Hello! I'm your AI assistant. How can I help you today?",
+      content: t("Hello! I'm your AI assistant. How can I help you today?"),
       timestamp: new Date(),
     },
   ]);
@@ -360,25 +362,27 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
       let errorMessage = '';
       if (error instanceof Error) {
         if (error.message.includes('timeout') || error.message.includes('TIMEOUT')) {
-          errorMessage = 'Connection timed out. The AI service might be unavailable.';
+          errorMessage = t('Connection timed out. The AI service might be unavailable.');
         } else if (error.message.includes('CONNECTION') || error.message.includes('ECONNREFUSED')) {
-          errorMessage = 'Cannot connect to AI service. Please check the endpoint configuration.';
+          errorMessage = t(
+            'Cannot connect to AI service. Please check the endpoint configuration.'
+          );
         } else {
-          errorMessage = `AI service error: ${error.message}`;
+          errorMessage = t('AI service error: {{message}}', { message: error.message });
         }
       } else {
-        errorMessage = 'Unknown error occurred while connecting to AI service.';
+        errorMessage = t('Unknown error occurred while connecting to AI service.');
       }
 
       const fallbackResponses = [
-        'I can help you with a wide range of technical questions or general inquiries.',
-        'Feel free to ask about software development, troubleshooting, or best practices.',
-        'What specific topic or problem would you like assistance with?',
+        t('I can help you with a wide range of technical questions or general inquiries.'),
+        t('Feel free to ask about software development, troubleshooting, or best practices.'),
+        t('What specific topic or problem would you like assistance with?'),
       ];
 
       const fallbackContent = `${errorMessage}\n\n${
         fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)]
-      }\n\n(Using fallback response - please check AI service configuration)`;
+      }\n\n${t('(Using fallback response - please check AI service configuration)')}`;
 
       setMessages(prev =>
         prev.map(msg =>
@@ -468,7 +472,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
         const stopMessage: Message = {
           id: Date.now().toString(),
           role: 'assistant',
-          content: 'Port forwarding stopped successfully.',
+          content: t('Port forwarding stopped successfully.'),
           timestamp: new Date(),
         };
         setMessages(prev => [...prev, stopMessage]);
@@ -480,7 +484,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
         const errorMessage: Message = {
           id: Date.now().toString(),
           role: 'assistant',
-          content: `Failed to stop port forwarding: ${errorMsg}`,
+          content: t('Failed to stop port forwarding: {{error}}', { error: errorMsg }),
           timestamp: new Date(),
         };
         setMessages(prev => [...prev, errorMessage]);
@@ -492,7 +496,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
       {
         id: 'welcome',
         role: 'assistant',
-        content: "Hello! I'm your AI assistant. How can I help you today?",
+        content: t("Hello! I'm your AI assistant. How can I help you today?"),
         timestamp: new Date(),
       },
     ]);
@@ -642,7 +646,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
                 wordBreak: 'break-word',
                 minHeight: '20px',
                 '&:empty::before': {
-                  content: '"Ask me a question..."',
+                  content: `"${t('Ask me a question...')}"`,
                   color: theme.palette.text.secondary,
                   fontStyle: 'normal',
                 },
@@ -663,7 +667,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
         >
           <Box display="flex" flexWrap="wrap" gap={1} color={theme.palette.primary.main}>
             <Chip
-              label="What can you do?"
+              label={t('What can you do?')}
               size="small"
               variant="outlined"
               onClick={() => handleChipClick('What can you help me with?')}
@@ -673,7 +677,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
               }}
             />
             <Chip
-              label="Deploy an app"
+              label={t('Deploy an app')}
               size="small"
               variant="outlined"
               onClick={() => handleChipClick('How do I deploy an application?')}
@@ -683,7 +687,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
               }}
             />
             <Chip
-              label="Troubleshoot issues"
+              label={t('Troubleshoot issues')}
               size="small"
               variant="outlined"
               onClick={() => handleChipClick('Can you help me troubleshoot a problem?')}
@@ -693,7 +697,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
               }}
             />
           </Box>
-          <Tooltip title="Select a model">
+          <Tooltip title={t('Select a model')}>
             <Autocomplete
               options={models}
               getOptionLabel={opt => opt.title}
@@ -717,7 +721,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
               renderInput={params => (
                 <TextField
                   {...params}
-                  label="Model"
+                  label={t('Model')}
                   variant="outlined"
                   sx={{
                     '& .MuiInputLabel-root': {
@@ -760,7 +764,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
         >
           <Stack direction="row" spacing={1}>
             {currentModelSupportsTools() && (
-              <Tooltip title="MCP Settings">
+              <Tooltip title={t('MCP Settings')}>
                 <IconButton
                   onClick={() => {
                     setMcpManagerOpen(true);
@@ -784,13 +788,13 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
                     },
                     transition: 'all 0.2s ease',
                   }}
-                  aria-label="MCP Settings"
+                  aria-label={t('MCP Settings')}
                 >
                   <Icon icon="material-symbols:build" style={{ fontSize: 20 }} />
                 </IconButton>
               </Tooltip>
             )}
-            <Tooltip title="Model Settings">
+            <Tooltip title={t('Model Settings')}>
               <IconButton
                 onClick={() => setSettingsOpen(true)}
                 size="small"
@@ -806,7 +810,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
                   },
                   transition: 'all 0.2s ease',
                 }}
-                aria-label="Model Settings"
+                aria-label={t('Model Settings')}
               >
                 <Icon icon="material-symbols:settings" style={{ fontSize: 20 }} />
               </IconButton>
@@ -829,7 +833,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
                 },
                 transition: 'all 0.2s ease',
               }}
-              aria-label="Close chat"
+              aria-label={t('Close chat')}
             >
               <Icon icon="material-symbols:close" style={{ fontSize: 20 }} />
             </IconButton>
@@ -889,7 +893,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
             <Stack direction="row" alignItems="center" spacing={2}>
               <Box>
                 <Typography variant="h6" fontWeight="600" color={theme.palette.text.primary}>
-                  Chat with {selectedModel?.title ?? 'Model'}
+                  {t('Chat with {{model}}', { model: selectedModel?.title ?? t('Model') })}
                 </Typography>
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <Box
@@ -907,9 +911,10 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
                   />
                   {modelSupportsToolsValue && mcpServers.length > 0 && (
                     <Chip
-                      label={`Tools: ${mcpServerStatus.filter(s => s.connected).length}/${
-                        mcpServers.filter(s => s.enabled).length
-                      }`}
+                      label={t('Tools: {{connected}}/{{total}}', {
+                        connected: mcpServerStatus.filter(s => s.connected).length,
+                        total: mcpServers.filter(s => s.enabled).length,
+                      })}
                       size="small"
                       color={mcpIntegration.isReady() ? 'success' : 'warning'}
                       sx={{ fontSize: '10px', height: '20px' }}
@@ -920,7 +925,7 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
             </Stack>{' '}
             <Stack direction="row" spacing={1}>
               {currentModelSupportsTools() && (
-                <Tooltip title="MCP Settings">
+                <Tooltip title={t('MCP Settings')}>
                   <IconButton
                     onClick={() => {
                       setMcpManagerOpen(true);
@@ -944,13 +949,13 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
                       },
                       transition: 'all 0.2s ease',
                     }}
-                    aria-label="MCP Settings"
+                    aria-label={t('MCP Settings')}
                   >
                     <Icon icon="material-symbols:build" style={{ fontSize: 20 }} />
                   </IconButton>
                 </Tooltip>
               )}
-              <Tooltip title="Model Settings">
+              <Tooltip title={t('Model Settings')}>
                 <IconButton
                   onClick={() => setSettingsOpen(true)}
                   size="small"
@@ -966,17 +971,17 @@ const ChatUI: React.FC<ChatUIProps & { embedded?: boolean }> = ({
                     },
                     transition: 'all 0.2s ease',
                   }}
-                  aria-label="Model Settings"
+                  aria-label={t('Model Settings')}
                 >
                   <Icon icon="material-symbols:settings" style={{ fontSize: 20 }} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Clear conversation">
+              <Tooltip title={t('Clear conversation')}>
                 <IconButton onClick={clearChat} size="small">
                   <Icon icon="material-symbols:delete" style={{ fontSize: 20 }} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Close chat">
+              <Tooltip title={t('Close chat')}>
                 <IconButton
                   onClick={() => {
                     stopAIPortForward();

@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import {
   LightTooltip,
   ResourceListView,
@@ -9,13 +10,14 @@ import React from 'react';
 import { Workspace } from './resources/workspace';
 
 const KaitoWorkspacesList: React.FC = () => {
+  const { t } = useTranslation();
   const makeConditionStatusLabel = (conditionType: string) => {
     return (workspace: Workspace) => {
       const condition = workspace.status?.conditions?.find(cond => cond.type === conditionType);
       if (!condition) {
         return (
           <Box display="inline-block">
-            <StatusLabel status="">N/A</StatusLabel>
+            <StatusLabel status="">{t('N/A')}</StatusLabel>
           </Box>
         );
       }
@@ -39,7 +41,7 @@ const KaitoWorkspacesList: React.FC = () => {
                     height="1.2rem"
                   />
                 )}
-                {condition.status === 'True' ? 'Ready' : 'Not Ready'}
+                {condition.status === 'True' ? t('Ready') : t('Not Ready')}
               </StatusLabel>
             </Box>
           </LightTooltip>
@@ -50,37 +52,37 @@ const KaitoWorkspacesList: React.FC = () => {
 
   return (
     <ResourceListView
-      title="Workspaces"
+      title={t('Workspaces')}
       resourceClass={Workspace}
       columns={[
         'name',
         'namespace',
         {
           id: 'instanceType',
-          label: 'Instance Type',
+          label: t('Instance Type'),
           getValue: item => item.instanceType,
         },
         {
           id: 'resourceReady',
-          label: 'Resource Ready',
+          label: t('Resource Ready'),
           getValue: item => item.resourceReady,
           render: makeConditionStatusLabel('ResourceReady'),
         },
         {
           id: 'inferenceReady',
-          label: 'Inference Ready',
+          label: t('Inference Ready'),
           getValue: item => item.inferenceReady,
           render: makeConditionStatusLabel('InferenceReady'),
         },
         {
           id: 'jobStarted',
-          label: 'Job Started',
+          label: t('Job Started'),
           getValue: item => item.jobStarted,
           render: makeConditionStatusLabel('JobStarted'),
         },
         {
           id: 'workspaceSucceeded',
-          label: 'Workspace Succeeded',
+          label: t('Workspace Succeeded'),
           getValue: item => item.workspaceSucceeded,
           render: makeConditionStatusLabel('WorkspaceSucceeded'),
         },

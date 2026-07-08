@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import {
   Link as RouterLink,
   Loader,
@@ -210,6 +211,7 @@ const categories = [
 ];
 
 const KaitoModels = () => {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState(categories[0]);
   const [page, setPage] = useState(1);
@@ -226,7 +228,7 @@ const KaitoModels = () => {
         const presetModels = convertToPresetModels(supportedModels);
         setPresetModels(presetModels);
       } catch (err) {
-        setError('Failed to load models. Please try again later.');
+        setError(t('Failed to load models. Please try again later.'));
         console.error('Error loading models:', err);
       } finally {
         setLoading(false);
@@ -280,21 +282,21 @@ const KaitoModels = () => {
   return (
     <>
       <SectionHeader
-        title="Models"
+        title={t('Models')}
         actions={[
           <TextField
-            label="Search"
+            label={t('Search')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             sx={{ width: '20vw', marginRight: 2 }}
           />,
           <Autocomplete
             options={categories}
-            getOptionLabel={opt => opt.title}
+            getOptionLabel={opt => t(opt.title)}
             value={category}
             onChange={(e, val) => setCategory(val || categories[0])}
             sx={{ width: '20vw' }}
-            renderInput={params => <TextField {...params} label="Category" />}
+            renderInput={params => <TextField {...params} label={t('Category')} />}
           />,
         ]}
       />
@@ -340,7 +342,7 @@ const KaitoModels = () => {
                   </Box>
                   <Box display="flex" alignItems="center">
                     {model.supportsTools && (
-                      <Tooltip title="Supports Tool Calling">
+                      <Tooltip title={t('Supports Tool Calling')}>
                         <Icon
                           icon="material-symbols:build"
                           style={{ fontSize: 20, marginLeft: '0.5em' }}
@@ -383,10 +385,10 @@ const KaitoModels = () => {
                     sx={{ backgroundColor: '#000', color: 'white', textTransform: 'none' }}
                     onClick={() => handleDeploy(model)}
                   >
-                    Deploy
+                    {t('Deploy')}
                   </Button>
                   <Link href={model.company.url} target="_blank">
-                    Learn More
+                    {t('Learn More')}
                   </Link>
                 </CardActions>
               </Card>
